@@ -1,0 +1,118 @@
+---
+# Copyright 2019, VEXXHOST, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Gather variables for each operating system
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_version.split('.')[0] }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags:
+    - always
+
+- name: Fail if service was deployed using a different installation method
+  fail:
+    msg: "Switching installation methods for OpenStack services is not supported"
+  when:
+    - ansible_local is defined
+    - ansible_local.openstack_ansible is defined
+    - ansible_local.openstack_ansible.mistral is defined
+    - ansible_local.openstack_ansible.mistral.install_method is defined
+    - ansible_local.openstack_ansible.mistral.install_method != mistral_install_method
+
+- name: Gather variables for installation method
+  include_vars: "{{ mistral_install_method }}_install.yml"
+  tags:
+    - always
+
+- import_tasks: mq_setup.yml
+  when:
+    - "mistral_services['mistral-api']['group'] in group_names"
+    - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
+  vars:
+    _oslomsg_rpc_setup_host: "{{ mistral_oslomsg_rpc_setup_host }}"
+    _oslomsg_rpc_userid: "{{ mistral_oslomsg_rpc_userid }}"
+    _oslomsg_rpc_password: "{{ mistral_oslomsg_rpc_password }}"
+    _oslomsg_rpc_vhost: "{{ mistral_oslomsg_rpc_vhost }}"
+    _oslomsg_rpc_transport: "{{ mistral_oslomsg_rpc_transport }}"
+    _oslomsg_notify_setup_host: "{{ mistral_oslomsg_notify_setup_host }}"
+    _oslomsg_notify_userid: "{{ mistral_oslomsg_notify_userid }}"
+    _oslomsg_notify_password: "{{ mistral_oslomsg_notify_password }}"
+    _oslomsg_notify_vhost: "{{ mistral_oslomsg_notify_vhost }}"
+    _oslomsg_notify_transport: "{{ mistral_oslomsg_notify_transport }}"
+  tags:
+    - common-mq
+    - mistral-config
+
+- include_tasks: mistral_install.yml
+  tags:
+    - mistral-install
+
+- include_tasks: mistral_post_install.yml
+  tags:
+    - mistral-config
+
+- include_tasks: mistral_db_setup.yml
+  when:
+    - "mistral_services['mistral-api']['group'] in group_names"
+    - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
+  tags:
+    - mistral-config
+
+- name: Run the systemd service role
+  include_role:
+    name: systemd_service
+  vars:
+    systemd_user_name: "{{ mistral_system_user_name }}"
+    systemd_group_name: "{{ mistral_system_group_name }}"
+    systemd_tempd_prefix: openstack
+    systemd_slice_name: mistral
+    systemd_lock_path: /var/lock/mistral
+    systemd_CPUAccounting: true
+    systemd_BlockIOAccounting: true
+    systemd_MemoryAccounting: true
+    systemd_TasksAccounting: true
+    systemd_services: |-
+      {% set services = [] %}
+      {% for service in filtered_mistral_services %}
+      {%
+        set _ = service.update(
+          {
+            'enabled': 'yes',
+            'state': 'started',
+            'config_overrides': service.init_config_overrides
+          }
+        )
+      %}
+      {%   set _ = service.pop('init_config_overrides') -%}
+      {%   set _ = services.append(service) -%}
+      {% endfor %}
+      {{ services }}
+  tags:
+    - mistral-config
+    - systemd-service
+
+- include_tasks: mistral_service_setup.yml
+  when:
+    - "mistral_services['mistral-api']['group'] in group_names"
+    - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
+  tags:
+    - mistral-config
+
+- name: Flush handlers
+  meta: flush_handlers
