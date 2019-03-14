@@ -28,25 +28,109 @@
       {% endfor %}
   when: mistral_developer_mode | bool
 
-- name: Ensure remote wheel building is disabled in developer mode
-  set_fact:
-    venv_build_host: "{{ inventory_hostname }}"
-  when: mistral_developer_mode | bool
+- name: Retrieve checksum for venv download
+  uri:
+    url: "{{ mistral_venv_download_url | replace('tgz', 'checksum') }}"
+    return_content: yes
+  register: mistral_venv_checksum
+  when: mistral_venv_download | bool
 
-- name: Install the python venv
-  include_role:
-    name: "python_venv_build"
-  vars:
-    venv_build_distro_package_list: "{{ mistral_devel_distro_packages }}"
-    venv_install_destination_path: "{{ mistral_bin | dirname }}"
-    venv_pip_install_args: "{{ mistral_pip_install_args }}"
-    venv_pip_packages: >-
-      {{ mistral_pip_packages +
-         (mistral_oslomsg_amqp1_enabled | bool) | ternary(mistral_optional_oslomsg_amqp1_pip_packages, []) }}
-    venv_facts_when_changed:
-      - section: "mistral"
-        option: "need_service_restart"
-        value: True
-      - section: "mistral"
-        option: "venv_tag"
-        value: "{{ mistral_venv_tag }}"
+- name: Attempt venv download
+  get_url:
+    url: "{{ mistral_venv_download_url }}"
+    dest: "/var/cache/{{ mistral_venv_download_url | basename }}"
+    checksum: "sha1:{{ mistral_venv_checksum.content | trim }}"
+  register: mistral_get_venv
+  when: mistral_venv_download | bool
+
+- name: Remove existing venv
+  file:
+    path: "{{ mistral_bin | dirname }}"
+    state: absent
+  when: mistral_get_venv is changed
+
+- name: Create mistral venv dir
+  file:
+    path: "{{ mistral_bin | dirname }}"
+    state: directory
+  register: mistral_venv_dir
+  when: mistral_get_venv is changed
+
+- name: Unarchive pre-built venv
+  unarchive:
+    src: "/var/cache/{{ mistral_venv_download_url | basename }}"
+    dest: "{{ mistral_bin | dirname }}"
+    copy: "no"
+  when: mistral_get_venv is changed
+  notify:
+    - Manage LB
+    - Restart mistral services
+
+- name: Install pip packages
+  pip:
+    name: "{{ mistral_pip_packages }}"
+    state: "{{ mistral_pip_package_state }}"
+    virtualenv: "{{ mistral_bin | dirname }}"
+    virtualenv_site_packages: "no"
+    extra_args: >-
+      {{ mistral_developer_mode | ternary(pip_install_developer_constraints | default('--constraint /opt/developer-pip-constraints.txt'), '') }}
+      {{ (pip_install_upper_constraints is defined) | ternary('--constraint ' + pip_install_upper_constraints | default(''),'') }}
+      {{ pip_install_options | default('') }}
+  register: install_packages
+  until: install_packages is success
+  retries: 5
+  delay: 2
+  when: mistral_get_venv | failed or mistral_get_venv | skipped
+  notify:
+    - Manage LB
+    - Restart mistral services
+
+- name: Remove python from path first (CentOS, openSUSE)
+  file:
+    path:  "{{ mistral_bin | dirname }}/bin/python2.7"
+    state: "absent"
+  when:
+    - ansible_pkg_mgr in ['yum', 'dnf', 'zypper']
+    - mistral_get_venv is changed
+
+# NOTE(odyssey4me):
+# We reinitialize the venv to ensure that the right
+# version of python is in the venv, but we do not
+# want virtualenv to also replace pip, setuptools
+# and wheel so we tell it not to.
+# We do not use --always-copy for CentOS/SuSE due
+# to https://github.com/pypa/virtualenv/issues/565
+- name: Update virtualenv path
+  shell: |
+    find {{ mistral_bin }} -name \*.pyc -delete
+    sed -si '1s/^.*python.*$/#!{{ mistral_bin | replace ('/','\/') }}\/python/' {{ mistral_bin }}/*
+    virtualenv {{ mistral_bin | dirname }} \
+        {{ (ansible_pkg_mgr == 'apt') | ternary('--always-copy', '') }} \
+        --no-pip \
+        --no-setuptools \
+        --no-wheel
+  when: mistral_get_venv is changed
+  tags:
+    - skip_ansible_lint
+
+- name: Install optional pip packages
+  pip:
+    name: "{{ mistral_optional_oslomsg_amqp1_pip_packages }}"
+    state: "{{ mistral_pip_package_state }}"
+    virtualenv: "{{ mistral_bin | dirname }}"
+    virtualenv_site_packages: "no"
+  when: mistral_oslomsg_amqp1_enabled
+  register: install_optional_packages
+  until: install_optional_packages is success
+  retries: 5
+  delay: 2
+  notify:
+    - Manage LB
+    - Restart mistral services
+
+- name: Record the venv tag deployed
+  ini_file:
+    dest: "/etc/ansible/facts.d/openstack_ansible.fact"
+    section: mistral
+    option: venv_tag
+    value: "{{ mistral_venv_tag }}"
