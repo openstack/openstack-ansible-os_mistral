@@ -74,15 +74,6 @@
   include_tasks: mistral_install_source.yml
   when: mistral_install_method == 'source'
 
-- name: Record the need for a service restart
-  ini_file:
-    dest: "/etc/ansible/facts.d/openstack_ansible.fact"
-    section: "mistral"
-    option: "need_service_restart"
-    value: true
-  when: (install_packages is changed) or
-        ('need_service_restart' not in ansible_local['openstack_ansible']['mistral'])
-
 - name: Ensure uWSGI directory exists
   file:
     path: "/etc/uwsgi/"

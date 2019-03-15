@@ -16,6 +16,11 @@
 # Installation method
 mistral_install_method: "source"
 
+# venv_download, even when true, will use the fallback method of building the
+# venv from scratch if the venv download fails.
+mistral_venv_download: "{{ not mistral_developer_mode | bool }}"
+mistral_venv_download_url: http://127.0.0.1/venvs/untagged/ubuntu/mistral.tgz
+
 # Operating system user & groups
 mistral_system_user_name: mistral
 mistral_system_group_name: mistral
@@ -25,6 +30,7 @@ mistral_system_user_home: /var/lib/mistral
 
 # Distribution deployment
 mistral_package_state: latest
+mistral_pip_package_state: latest
 
 # This variable is used by the repo_build process to determine
 # which host group to check for members of before building the
