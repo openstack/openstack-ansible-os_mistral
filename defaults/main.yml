@@ -33,11 +33,12 @@ mistral_package_state: latest
 mistral_role_project_group: mistral_all
 
 # Source package builds
-mistral_developer_mode: false
 mistral_git_repo: https://git.openstack.org/openstack/mistral
 mistral_git_install_branch: master
-mistral_developer_constraints:
+mistral_upper_constraints_url: "{{ requirements_git_url | default('https://git.openstack.org/cgit/openstack/requirements/plain/upper-constraints.txt?h=' ~ requirements_git_install_branch | default('master')) }}"
+mistral_git_constraints:
   - "git+{{ mistral_git_repo }}@{{ mistral_git_install_branch }}#egg=mistral"
+  - "--constraint {{ mistral_upper_constraints_url }}"
 mistral_pip_packages:
   - mistral
   - PyMySQL
@@ -47,16 +48,8 @@ mistral_optional_oslomsg_amqp1_pip_packages:
   - oslo.messaging[amqp1]
 mistral_venv_tag: "{{ venv_tag | default('untagged') }}"
 mistral_bin: "{{ _mistral_bin }}"
-# TODO(odyssey4me):
-# This can be simplified once all the roles are using
-# python_venv_build. We can then switch to using a
-# set of constraints in pip.conf inside the venv,
-# perhaps prepared by giving a giving a list of
-# constraints to the role.
-mistral_pip_install_args: >-
-  {{ mistral_developer_mode | ternary(pip_install_developer_constraints | default('--constraint /opt/developer-pip-constraints.txt'), '') }}
-  {{ (pip_install_upper_constraints is defined) | ternary('--constraint ' + pip_install_upper_constraints | default(''), '') }}
-  {{ pip_install_options | default('') }}
+
+mistral_pip_install_args: "{{ pip_install_options | default('') }}"
 
 # Services
 mistral_services:
@@ -161,3 +154,6 @@ mistral_service_internaluri_proto: "{{ openstack_service_internaluri_proto | def
 mistral_service_internalurl: "{{ mistral_service_internaluri_proto }}://{{ internal_lb_vip_address }}:{{ mistral_service_port }}/v2"
 mistral_service_adminuri_proto: "{{ openstack_service_adminuri_proto | default(mistral_service_proto) }}"
 mistral_service_adminurl: "{{ mistral_service_adminuri_proto }}://{{ internal_lb_vip_address }}:{{ mistral_service_port }}/v2"
+
+# Specific pip packages provided by the user
+mistral_user_pip_packages: []

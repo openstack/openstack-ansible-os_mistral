@@ -70,8 +70,22 @@
   retries: 5
   delay: 2
 
-- name: Install mistral packages from PIP
-  include_tasks: mistral_install_source.yml
+- name: Install the python venv
+  import_role:
+    name: "python_venv_build"
+  vars:
+    venv_build_constraints: "{{ mistral_git_constraints }}"
+    venv_build_distro_package_list: "{{ mistral_devel_distro_packages }}"
+    venv_install_destination_path: "{{ mistral_bin | dirname }}"
+    venv_pip_install_args: "{{ mistral_pip_install_args }}"
+    venv_pip_packages: >-
+      {{ mistral_pip_packages |
+           union(mistral_user_pip_packages) |
+             union(((mistral_oslomsg_amqp1_enabled | bool) | ternary(mistral_optional_oslomsg_amqp1_pip_packages, []))) }}
+    venv_facts_when_changed:
+      - section: "mistral"
+        option: "venv_tag"
+        value: "{{ mistral_venv_tag }}"
   when: mistral_install_method == 'source'
 
 - name: Record the need for a service restart
