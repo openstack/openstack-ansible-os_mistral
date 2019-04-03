@@ -28,3 +28,4 @@ mistral_oslomsg_amqp1_distro_packages:
   - sasl2-bin
 
 mistral_uwsgi_bin: '/usr/bin'
+cache_timeout: 600
