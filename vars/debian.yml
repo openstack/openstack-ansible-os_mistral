@@ -21,9 +21,9 @@ mistral_distro_packages:
   - libpython2.7
 
 mistral_service_distro_packages:
-  - mistral-api
-  - mistral-engine
-  - mistral-executor
+  - python3-mistral
+  - uwsgi
+  - uwsgi-plugin-python3
 
 mistral_oslomsg_amqp1_distro_packages:
   - libsasl2-modules
