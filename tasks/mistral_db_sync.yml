@@ -13,32 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create DB for service
-  mysql_db:
-    login_user: "{{ galera_root_user }}"
-    login_password: "{{ galera_root_password }}"
-    login_host: "{{ mistral_galera_address }}"
-    name: "{{ mistral_galera_database }}"
-    state: "present"
-  delegate_to: "{{ mistral_db_setup_host }}"
-  no_log: True
-
-- name: Grant access to the DB for the service
-  mysql_user:
-    login_user: "{{ galera_root_user }}"
-    login_password: "{{ galera_root_password }}"
-    login_host: "{{ mistral_galera_address }}"
-    name: "{{ mistral_galera_user }}"
-    password: "{{ mistral_galera_password }}"
-    host: "{{ item }}"
-    state: "present"
-    priv: "{{ mistral_galera_database }}.*:ALL"
-  delegate_to: "{{ mistral_db_setup_host }}"
-  with_items:
-    - "localhost"
-    - "%"
-  no_log: True
-
 - name: Perform a Mistral DB sync
   command: "{{ mistral_bin }}/mistral-db-manage upgrade head"
   become: yes

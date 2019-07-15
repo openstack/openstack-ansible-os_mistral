@@ -40,6 +40,21 @@
   tags:
     - always
 
+- import_tasks: db_setup.yml
+  when:
+    - "mistral_services['mistral-api']['group'] in group_names"
+    - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
+  vars:
+    _oslodb_setup_host: "{{ mistral_db_setup_host }}"
+    _oslodb_databases:
+      - name: "{{ mistral_galera_database }}"
+        users:
+          - username: "{{ mistral_galera_user }}"
+            password: "{{ mistral_galera_password }}"
+  tags:
+    - common-db
+    - mistral-config
+
 - import_tasks: mq_setup.yml
   when:
     - "mistral_services['mistral-api']['group'] in group_names"
@@ -67,7 +82,7 @@
   tags:
     - mistral-config
 
-- include_tasks: mistral_db_setup.yml
+- include_tasks: mistral_db_sync.yml
   when:
     - "mistral_services['mistral-api']['group'] in group_names"
     - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
