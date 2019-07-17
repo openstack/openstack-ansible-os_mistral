@@ -74,15 +74,15 @@
     - common-mq
     - mistral-config
 
-- include_tasks: mistral_install.yml
+- import_tasks: mistral_install.yml
   tags:
     - mistral-install
 
-- include_tasks: mistral_post_install.yml
+- import_tasks: mistral_post_install.yml
   tags:
     - mistral-config
 
-- include_tasks: mistral_db_sync.yml
+- import_tasks: mistral_db_sync.yml
   when:
     - "mistral_services['mistral-api']['group'] in group_names"
     - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
@@ -90,7 +90,7 @@
     - mistral-config
 
 - name: Run the systemd service role
-  include_role:
+  import_role:
     name: systemd_service
   vars:
     systemd_user_name: "{{ mistral_system_user_name }}"
@@ -122,7 +122,7 @@
     - mistral-config
     - systemd-service
 
-- include_tasks: mistral_service_setup.yml
+- import_tasks: mistral_service_setup.yml
   when:
     - "mistral_services['mistral-api']['group'] in group_names"
     - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
