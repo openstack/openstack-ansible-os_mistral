@@ -2,7 +2,7 @@
 
 [DEFAULT]
 debug = {{ mistral_debug }}
-log_dir = /var/log/mistral
+use_journal = True
 transport_url = {{ mistral_oslomsg_rpc_transport }}://{% for host in mistral_oslomsg_rpc_servers.split(',') %}{{ mistral_oslomsg_rpc_userid }}:{{ mistral_oslomsg_rpc_password }}@{{ host }}:{{ mistral_oslomsg_rpc_port }}{% if not loop.last %},{% else %}/{{ mistral_oslomsg_rpc_vhost }}{% if mistral_oslomsg_rpc_use_ssl | bool %}?ssl=1{% else %}?ssl=0{% endif %}{% endif %}{% endfor %}
 
 [api]
