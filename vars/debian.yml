@@ -15,6 +15,7 @@
 
 mistral_devel_distro_packages:
   - git-core
+  - libsystemd-dev
 
 mistral_distro_packages:
   - libxml2
@@ -22,6 +23,7 @@ mistral_distro_packages:
 
 mistral_service_distro_packages:
   - python3-mistral
+  - python3-systemd
   - uwsgi
   - uwsgi-plugin-python3
 

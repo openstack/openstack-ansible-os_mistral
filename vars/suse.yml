@@ -15,11 +15,13 @@
 
 mistral_devel_distro_packages:
   - git
+  - systemd-devel
 
 mistral_distro_packages: []
 
 mistral_service_distro_packages:
   - openstack-mistral
+  - python-systemd
 
 mistral_oslomsg_amqp1_distro_packages:
   - cyrus-sasl

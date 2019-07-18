@@ -56,8 +56,6 @@
     - path: "/etc/mistral"
       mode: "0750"
     - path: "{{ mistral_system_user_home }}"
-    - path: "/var/log/mistral"
-      mode: "0755"
 
 - name: Install distro packages
   package:

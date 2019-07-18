@@ -43,6 +43,7 @@ mistral_pip_packages:
   - mistral
   - PyMySQL
   - python-memcached
+  - systemd-python
   - uwsgi
 mistral_optional_oslomsg_amqp1_pip_packages:
   - oslo.messaging[amqp1]

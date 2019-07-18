@@ -15,6 +15,7 @@
 
 mistral_devel_distro_packages:
   - git
+  - systemd-devel
 
 mistral_distro_packages: []
 
@@ -23,6 +24,7 @@ mistral_service_distro_packages:
   - openstack-mistral-engine
   - openstack-mistral-executor
   - openstack-mistral-notifier
+  - systemd-python
 
 mistral_oslomsg_amqp1_distro_packages:
   - cyrus-sasl-lib
