@@ -122,7 +122,32 @@
     - mistral-config
     - systemd-service
 
-- import_tasks: mistral_service_setup.yml
+- import_tasks: service_setup.yml
+  vars:
+    _service_adminuri_insecure: "{{ keystone_service_adminuri_insecure }}"
+    _service_in_ldap: "{{ mistral_service_in_ldap }}"
+    _service_setup_host: "{{ mistral_service_setup_host }}"
+    _service_setup_host_python_interpreter: "{{ mistral_service_setup_host_python_interpreter }}"
+    _service_project_name: "{{ mistral_service_project_name }}"
+    _service_region: "{{ mistral_service_region }}"
+    _service_users:
+      - name: "{{ mistral_service_user_name }}"
+        password: "{{ mistral_service_password }}"
+        role: "{{ mistral_role_name }}"
+    _service_endpoints:
+      - service: "{{ mistral_service_name }}"
+        interface: "public"
+        url: "{{ mistral_service_publicurl }}"
+      - service: "{{ mistral_service_name }}"
+        interface: "internal"
+        url: "{{ mistral_service_internalurl }}"
+      - service: "{{ mistral_service_name }}"
+        interface: "admin"
+        url: "{{ mistral_service_adminurl }}"
+    _service_catalog:
+      - name: "{{ mistral_service_name }}"
+        type: "{{ mistral_service_type }}"
+        description: "{{ mistral_service_description }}"
   when:
     - "mistral_services['mistral-api']['group'] in group_names"
     - "inventory_hostname == ((groups[mistral_services['mistral-api']['group']]| intersect(ansible_play_hosts)) | list)[0]"
