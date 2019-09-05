@@ -44,7 +44,7 @@ mistral_pip_packages:
   - PyMySQL
   - python-memcached
   - systemd-python
-  - uwsgi
+
 mistral_optional_oslomsg_amqp1_pip_packages:
   - oslo.messaging[amqp1]
 mistral_venv_tag: "{{ venv_tag | default('untagged') }}"
@@ -77,18 +77,15 @@ mistral_services:
     service_name: mistral-api
     init_config_overrides: "{{ mistral_api_init_overrides }}"
     start_order: 2
-    wsgi_overrides: "{{ mistral_api_uwsgi_ini_overrides }}"
     wsgi_app: true
     wsgi_name: mistral-wsgi-api
+    uwsgi_overrides: "{{ mistral_api_uwsgi_ini_overrides }}"
     uwsgi_bind_address: "{{ mistral_bind_address }}"
     uwsgi_port: "{{ mistral_service_port }}"
-    execstarts: "{{ mistral_uwsgi_bin }}/uwsgi --autoload --ini /etc/uwsgi/mistral-api.ini"
-    execreloads: "{{ mistral_uwsgi_bin }}/uwsgi --reload /var/run/mistral-api/mistral-api.pid"
 
 # UWSGI settings
 mistral_wsgi_processes_max: 16
 mistral_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | max * 2, mistral_wsgi_processes_max] | min }}"
-mistral_wsgi_buffer_size: 65535
 mistral_wsgi_threads: 1
 
 # RPC

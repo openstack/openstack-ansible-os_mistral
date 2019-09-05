@@ -21,4 +21,3 @@ mistral_package_list: |-
   {{ packages }}
 
 _mistral_bin: "/openstack/venvs/mistral-{{ mistral_venv_tag }}/bin"
-mistral_uwsgi_bin: "{{ _mistral_bin }}"

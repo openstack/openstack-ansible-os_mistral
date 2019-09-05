@@ -94,22 +94,3 @@
     value: true
   when: (install_packages is changed) or
         ('need_service_restart' not in ansible_local['openstack_ansible']['mistral'])
-
-- name: Ensure uWSGI directory exists
-  file:
-    path: "/etc/uwsgi/"
-    state: directory
-    mode: "0711"
-
-- name: Apply uWSGI configuration
-  config_template:
-    src: "mistral-uwsgi.ini.j2"
-    dest: "/etc/uwsgi/{{ item.service_name }}.ini"
-    mode: "0744"
-    config_overrides: "{{ item.wsgi_overrides }}"
-    config_type: ini
-  with_items: "{{ filtered_mistral_services }}"
-  when: item.wsgi_app | default(False)
-  notify:
-    - Manage LB
-    - Restart mistral services
