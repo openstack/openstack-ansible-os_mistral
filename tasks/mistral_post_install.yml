@@ -30,6 +30,7 @@
   notify:
     - Manage LB
     - Restart mistral services
+    - Restart uwsgi services
 
 - name: Implement policy.json if there are overrides configured
   copy:

@@ -24,12 +24,9 @@ mistral_distro_packages:
 mistral_service_distro_packages:
   - python3-mistral
   - python3-systemd
-  - uwsgi
-  - uwsgi-plugin-python3
 
 mistral_oslomsg_amqp1_distro_packages:
   - libsasl2-modules
   - sasl2-bin
 
-mistral_uwsgi_bin: '/usr/bin'
 cache_timeout: 600

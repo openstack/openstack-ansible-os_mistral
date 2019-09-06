@@ -30,5 +30,3 @@ mistral_oslomsg_amqp1_distro_packages:
   - cyrus-sasl-lib
   - cyrus-sasl-plain
   - cyrus-sasl-md5
-
-mistral_uwsgi_bin: '/usr/sbin'
