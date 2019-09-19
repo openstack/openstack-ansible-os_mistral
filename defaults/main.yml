@@ -120,7 +120,7 @@ mistral_galera_user: mistral
 
 # Configuration options
 mistral_debug: "{{ debug | default(false) }}"
-mistral_bind_address: 0.0.0.0
+mistral_bind_address: "{{ openstack_service_bind_address | default('0.0.0.0') }}"
 mistral_service_port: 8989
 
 # Overrides
