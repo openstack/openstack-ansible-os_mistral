@@ -25,7 +25,7 @@ mistral_service_adminurl: "{{ mistral_service_publicurl }}"
 tempest_run: yes
 tempest_plugins:
   - name: mistral-tempest-plugin
-    repo: https://git.openstack.org/openstack/mistral-tempest-plugin
+    repo: https://opendev.org/openstack/mistral-tempest-plugin
     branch: master
 tempest_test_whitelist:
   - mistral_tempest_tests.tests.api

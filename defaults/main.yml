@@ -34,9 +34,9 @@ mistral_package_state: latest
 mistral_role_project_group: mistral_all
 
 # Source package builds
-mistral_git_repo: https://git.openstack.org/openstack/mistral
+mistral_git_repo: https://opendev.org/openstack/mistral
 mistral_git_install_branch: master
-mistral_upper_constraints_url: "{{ requirements_git_url | default('https://git.openstack.org/cgit/openstack/requirements/plain/upper-constraints.txt?h=' ~ requirements_git_install_branch | default('master')) }}"
+mistral_upper_constraints_url: "{{ requirements_git_url | default('https://releases.openstack.org/constraints/upper/' ~ requirements_git_install_branch | default('master')) }}"
 mistral_git_constraints:
   - "git+{{ mistral_git_repo }}@{{ mistral_git_install_branch }}#egg=mistral"
   - "--constraint {{ mistral_upper_constraints_url }}"
