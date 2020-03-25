@@ -43,6 +43,7 @@ mistral_git_constraints:
 mistral_pip_packages:
   - mistral
   - PyMySQL
+  - pymemcache
   - python-memcached
   - systemd-python
 
@@ -52,6 +53,8 @@ mistral_venv_tag: "{{ venv_tag | default('untagged') }}"
 mistral_bin: "{{ _mistral_bin }}"
 
 mistral_pip_install_args: "{{ pip_install_options | default('') }}"
+
+mistral_memcached_servers: "{{ memcached_servers }}"
 
 # Services
 mistral_services:
