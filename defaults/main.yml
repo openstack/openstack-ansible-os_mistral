@@ -27,12 +27,6 @@ mistral_system_user_home: /var/lib/mistral
 # Distribution deployment
 mistral_package_state: latest
 
-# This variable is used by the repo_build process to determine
-# which host group to check for members of before building the
-# pip packages required by this role. The value is picked up
-# by the py_pkgs lookup.
-mistral_role_project_group: mistral_all
-
 # Source package builds
 mistral_git_repo: https://opendev.org/openstack/mistral
 mistral_git_install_branch: master
