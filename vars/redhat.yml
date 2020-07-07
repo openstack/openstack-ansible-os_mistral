@@ -24,7 +24,7 @@ mistral_service_distro_packages:
   - openstack-mistral-engine
   - openstack-mistral-executor
   - openstack-mistral-notifier
-  - systemd-python
+  - "{{ ansible_distribution_major_version is version('8', '<') | ternary('systemd-python', 'python3-systemd') }}"
 
 mistral_oslomsg_amqp1_distro_packages:
   - cyrus-sasl-lib
