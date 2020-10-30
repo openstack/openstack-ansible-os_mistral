@@ -83,7 +83,7 @@ mistral_services:
 
 # UWSGI settings
 mistral_wsgi_processes_max: 16
-mistral_wsgi_processes: "{{ [[ansible_processor_vcpus|default(1), 1] | max * 2, mistral_wsgi_processes_max] | min }}"
+mistral_wsgi_processes: "{{ [[(ansible_processor_vcpus//ansible_processor_threads_per_core)|default(1), 1] | max * 2, mistral_wsgi_processes_max] | min }}"
 mistral_wsgi_threads: 1
 
 # RPC
