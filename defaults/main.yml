@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Installation method
-mistral_install_method: "source"
+mistral_install_method: "{{ service_install_method | default('source') }}"
 mistral_venv_python_executable: "{{ openstack_venv_python_executable | default('python2') }}"
 
 # Operating system user & groups
@@ -25,7 +25,7 @@ mistral_system_comment: Mistral Daemons
 mistral_system_user_home: /var/lib/mistral
 
 # Distribution deployment
-mistral_package_state: latest
+mistral_package_state: "{{ package_state | default('latest') }}"
 
 # Source package builds
 mistral_git_repo: https://opendev.org/openstack/mistral
@@ -116,7 +116,7 @@ mistral_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter |
 mistral_galera_address: "{{ galera_address | default('127.0.0.1') }}"
 mistral_galera_database: mistral
 mistral_galera_user: mistral
-mistral_galera_port: 3306
+mistral_galera_port: "{{ galera_port | default('3306') }}"
 
 # Configuration options
 mistral_debug: "{{ debug | default(false) }}"
@@ -138,13 +138,13 @@ mistral_service_setup_host_python_interpreter: "{{ openstack_service_setup_host_
 mistral_service_name: mistral
 mistral_service_type: workflowv2
 mistral_service_description: OpenStack Workflow service
-mistral_service_in_ldap: false
+mistral_service_in_ldap: "{{ service_ldap_backend_enabled | default(False) }}"
 mistral_service_user_domain_id: default
 mistral_service_user_name: mistral
 mistral_service_project_domain_id: default
 mistral_service_project_name: service
 mistral_role_name: admin
-mistral_service_region: RegionOne
+mistral_service_region: "{{ service_region | default('RegionOne') }}"
 mistral_service_proto: http
 mistral_service_publicuri_proto: "{{ openstack_service_publicuri_proto | default(mistral_service_proto) }}"
 mistral_service_publicurl: "{{ mistral_service_publicuri_proto }}://{{ external_lb_vip_address }}:{{ mistral_service_port }}/v2"
