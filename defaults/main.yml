@@ -15,7 +15,7 @@
 
 # Installation method
 mistral_install_method: "{{ service_install_method | default('source') }}"
-mistral_venv_python_executable: "{{ openstack_venv_python_executable | default('python2') }}"
+mistral_venv_python_executable: "{{ openstack_venv_python_executable | default('python3') }}"
 
 # Operating system user & groups
 mistral_system_user_name: mistral
