@@ -82,7 +82,7 @@ mistral_services:
 
 # UWSGI settings
 mistral_wsgi_processes_max: 16
-mistral_wsgi_processes: "{{ [[(ansible_processor_vcpus//ansible_processor_threads_per_core)|default(1), 1] | max * 2, mistral_wsgi_processes_max] | min }}"
+mistral_wsgi_processes: "{{ [[(ansible_facts['processor_vcpus']//ansible_facts['processor_threads_per_core'])|default(1), 1] | max * 2, mistral_wsgi_processes_max] | min }}"
 mistral_wsgi_threads: 1
 
 # RPC
@@ -111,7 +111,7 @@ mistral_oslomsg_amqp1_enabled: "{{ mistral_oslomsg_rpc_transport == 'amqp' }}"
 
 # Database
 mistral_db_setup_host: "{{ openstack_db_setup_host | default('localhost') }}"
-mistral_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((mistral_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable'])) }}"
+mistral_db_setup_python_interpreter: "{{ openstack_db_setup_python_interpreter | default((mistral_db_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_facts['python']['executable'])) }}"
 mistral_galera_address: "{{ galera_address | default('127.0.0.1') }}"
 mistral_galera_database: mistral
 mistral_galera_user: mistral
@@ -133,7 +133,7 @@ mistral_policy_overrides: {}
 
 # Service setup
 mistral_service_setup_host: "{{ openstack_service_setup_host | default('localhost') }}"
-mistral_service_setup_host_python_interpreter: "{{ openstack_service_setup_host_python_interpreter | default((mistral_service_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_python['executable'])) }}"
+mistral_service_setup_host_python_interpreter: "{{ openstack_service_setup_host_python_interpreter | default((mistral_service_setup_host == 'localhost') | ternary(ansible_playbook_python, ansible_facts['python']['executable'])) }}"
 mistral_service_name: mistral
 mistral_service_type: workflowv2
 mistral_service_description: OpenStack Workflow service
