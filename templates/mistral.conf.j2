@@ -9,7 +9,7 @@ transport_url = {{ mistral_oslomsg_rpc_transport }}://{% for host in mistral_osl
 allow_action_execution_deletion = True
 
 [database]
-connection = mysql+pymysql://{{ mistral_galera_user }}:{{ mistral_galera_password }}@{{ mistral_galera_address }}/{{ mistral_galera_database }}?charset=utf8
+connection = mysql+pymysql://{{ mistral_galera_user }}:{{ mistral_galera_password }}@{{ mistral_galera_address }}/{{ mistral_galera_database }}?charset=utf8{% if mistral_galera_use_ssl | bool %}&ssl_verify_cert=true{% if mistral_galera_ssl_ca_cert | length > 0 %}&ssl_ca={{ mistral_galera_ssl_ca_cert }}{% endif %}{% endif %}
 
 [keystone_authtoken]
 auth_type = password
