@@ -21,14 +21,12 @@
     check:
       jobs:
         - openstack-ansible-deploy-aio_metal_mistral-centos-7
-        - openstack-ansible-deploy-aio_metal_mistral-debian-stable
         - openstack-ansible-deploy-aio_metal_mistral-ubuntu-bionic
         - openstack-ansible-deploy-aio_distro_metal_mistral-centos-7
         - openstack-ansible-deploy-aio_distro_metal_mistral-ubuntu-bionic
     gate:
       jobs:
         - openstack-ansible-deploy-aio_metal_mistral-centos-7
-        - openstack-ansible-deploy-aio_metal_mistral-debian-stable
         - openstack-ansible-deploy-aio_metal_mistral-ubuntu-bionic
         - openstack-ansible-deploy-aio_distro_metal_mistral-centos-7
         - openstack-ansible-deploy-aio_distro_metal_mistral-ubuntu-bionic
