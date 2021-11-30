@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Deploy Mistral configuration files
-  config_template:
+  openstack.config_template.config_template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "root"
@@ -33,7 +33,7 @@
     - Restart uwsgi services
 
 - name: Implement policy.yaml if there are overrides configured
-  config_template:
+  openstack.config_template.config_template:
     content: "{{ mistral_policy_overrides }}"
     dest: "/etc/mistral/policy.yaml"
     owner: "root"
