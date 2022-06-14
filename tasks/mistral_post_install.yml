@@ -28,7 +28,6 @@
       config_overrides: "{{ mistral_mistral_conf_overrides }}"
       config_type: "ini"
   notify:
-    - Manage LB
     - Restart mistral services
     - Restart uwsgi services
 
