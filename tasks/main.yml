@@ -160,7 +160,7 @@
     _service_users:
       - name: "{{ mistral_service_user_name }}"
         password: "{{ mistral_service_password }}"
-        role: "{{ mistral_role_name }}"
+        role: "{{ mistral_service_role_names }}"
     _service_endpoints:
       - service: "{{ mistral_service_name }}"
         interface: "public"
