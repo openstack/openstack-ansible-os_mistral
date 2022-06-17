@@ -152,7 +152,12 @@ mistral_service_user_domain_id: default
 mistral_service_user_name: mistral
 mistral_service_project_domain_id: default
 mistral_service_project_name: service
-mistral_role_name: admin
+mistral_service_role_names:
+  - admin
+  - service
+mistral_service_token_roles:
+  - service
+mistral_service_token_roles_required: "{{ openstack_service_token_roles_required | default(True) }}"
 mistral_service_region: "{{ service_region | default('RegionOne') }}"
 mistral_service_proto: http
 mistral_service_publicuri_proto: "{{ openstack_service_publicuri_proto | default(mistral_service_proto) }}"
