@@ -52,6 +52,8 @@ mistral_pip_install_args: "{{ pip_install_options | default('') }}"
 
 mistral_memcached_servers: "{{ memcached_servers }}"
 
+mistral_api_use_uwsgi: true
+
 # Services
 mistral_services:
   mistral-notifier:
@@ -77,7 +79,8 @@ mistral_services:
     service_name: mistral-api
     init_config_overrides: "{{ mistral_api_init_overrides }}"
     start_order: 2
-    wsgi_app: true
+    execstarts: "{{ _mistral_bin }}/mistral-server --server api"
+    wsgi_app: "{{ mistral_api_use_uwsgi }}"
     wsgi_name: mistral-wsgi-api
     uwsgi_overrides: "{{ mistral_api_uwsgi_ini_overrides }}"
     uwsgi_bind_address: "{{ mistral_bind_address }}"
