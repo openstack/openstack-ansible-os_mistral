@@ -14,7 +14,7 @@
 # limitations under the License.
 
 mistral_devel_distro_packages:
-  - git-core
+  - git
   - libsystemd-dev
 
 mistral_distro_packages:
