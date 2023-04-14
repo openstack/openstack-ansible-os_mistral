@@ -90,6 +90,26 @@
   tags:
     - mistral-install
 
+- name: Create and install SSL certificates
+  include_role:
+    name: pki
+    tasks_from: main_certs.yml
+    apply:
+      tags:
+        - mistral-config
+        - pki
+  vars:
+    pki_setup_host: "{{ mistral_pki_setup_host }}"
+    pki_dir: "{{ mistral_pki_dir }}"
+    pki_create_certificates: "{{ mistral_user_ssl_cert is not defined and mistral_user_ssl_key is not defined }}"
+    pki_regen_cert: "{{ mistral_pki_regen_cert }}"
+    pki_certificates: "{{ mistral_pki_certificates }}"
+    pki_install_certificates: "{{ mistral_pki_install_certificates }}"
+  when:
+    - mistral_backend_ssl
+  tags:
+    - always
+
 - import_tasks: mistral_post_install.yml
   tags:
     - mistral-config

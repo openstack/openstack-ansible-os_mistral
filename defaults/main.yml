@@ -85,11 +85,15 @@ mistral_services:
     uwsgi_overrides: "{{ mistral_api_uwsgi_ini_overrides }}"
     uwsgi_bind_address: "{{ mistral_bind_address }}"
     uwsgi_port: "{{ mistral_service_port }}"
+    uwsgi_tls: "{{ mistral_backend_ssl | ternary(mistral_uwsgi_tls, {}) }}"
 
 # UWSGI settings
 mistral_wsgi_processes_max: 16
 mistral_wsgi_processes: "{{ [[(ansible_facts['processor_vcpus']//ansible_facts['processor_threads_per_core'])|default(1), 1] | max * 2, mistral_wsgi_processes_max] | min }}"
 mistral_wsgi_threads: 1
+mistral_uwsgi_tls:
+  crt: "{{ mistral_ssl_cert }}"
+  key: "{{ mistral_ssl_key }}"
 
 # RPC
 mistral_oslomsg_rpc_host_group: "{{ oslomsg_rpc_host_group | default('rabbitmq_all') }}"
@@ -175,3 +179,51 @@ mistral_service_adminurl: "{{ mistral_service_adminuri_proto }}://{{ internal_lb
 
 # Specific pip packages provided by the user
 mistral_user_pip_packages: []
+
+###
+### Backend TLS
+###
+
+# Define if communication between haproxy and service backends should be
+# encrypted with TLS.
+mistral_backend_ssl: "{{ openstack_service_backend_ssl | default(False) }}"
+
+# Storage location for SSL certificate authority
+mistral_pki_dir: "{{ openstack_pki_dir | default('/etc/openstack_deploy/pki') }}"
+
+# Delegated host for operating the certificate authority
+mistral_pki_setup_host: "{{ openstack_pki_setup_host | default('localhost') }}"
+
+# mistral server certificate
+mistral_pki_keys_path: "{{ mistral_pki_dir ~ '/certs/private/' }}"
+mistral_pki_certs_path: "{{ mistral_pki_dir ~ '/certs/certs/' }}"
+mistral_pki_intermediate_cert_name: "{{ openstack_pki_service_intermediate_cert_name | default('ExampleCorpIntermediate') }}"
+mistral_pki_regen_cert: ''
+mistral_pki_san: "{{ openstack_pki_san | default('DNS:' ~ ansible_facts['hostname'] ~ ',IP:' ~ management_address) }}"
+mistral_pki_certificates:
+  - name: "mistral_{{ ansible_facts['hostname'] }}"
+    provider: ownca
+    cn: "{{ ansible_facts['hostname'] }}"
+    san: "{{ mistral_pki_san }}"
+    signed_by: "{{ mistral_pki_intermediate_cert_name }}"
+
+# mistral destination files for SSL certificates
+mistral_ssl_cert: /etc/mistral/mistral.pem
+mistral_ssl_key: /etc/mistral/mistral.key
+
+# Installation details for SSL certificates
+mistral_pki_install_certificates:
+  - src: "{{ mistral_user_ssl_cert | default(mistral_pki_certs_path ~ 'mistral_' ~ ansible_facts['hostname'] ~ '-chain.crt') }}"
+    dest: "{{ mistral_ssl_cert }}"
+    owner: "{{ mistral_system_user_name }}"
+    group: "{{ mistral_system_user_name }}"
+    mode: "0644"
+  - src: "{{ mistral_user_ssl_key | default(mistral_pki_keys_path ~ 'mistral_' ~ ansible_facts['hostname'] ~ '.key.pem') }}"
+    dest: "{{ mistral_ssl_key }}"
+    owner: "{{ mistral_system_user_name }}"
+    group: "{{ mistral_system_user_name }}"
+    mode: "0600"
+
+# Define user-provided SSL certificates
+#mistral_user_ssl_cert: <path to cert on ansible deployment host>
+#mistral_user_ssl_key: <path to cert on ansible deployment host>
