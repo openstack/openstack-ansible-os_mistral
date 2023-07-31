@@ -13,7 +13,7 @@ allow_action_execution_deletion = True
 enabled = {{ not mistral_api_use_uwsgi }}
 
 [database]
-connection = mysql+pymysql://{{ mistral_galera_user }}:{{ mistral_galera_password }}@{{ mistral_galera_address }}/{{ mistral_galera_database }}?charset=utf8{% if mistral_galera_use_ssl | bool %}&ssl_verify_cert=true{% if mistral_galera_ssl_ca_cert | length > 0 %}&ssl_ca={{ mistral_galera_ssl_ca_cert }}{% endif %}{% endif +%}
+connection = mysql+pymysql://{{ mistral_galera_user }}:{{ mistral_galera_password }}@{{ mistral_galera_address }}:{{ mistral_galera_port }}/{{ mistral_galera_database }}?charset=utf8{% if mistral_galera_use_ssl | bool %}&ssl_verify_cert=true{% if mistral_galera_ssl_ca_cert | length > 0 %}&ssl_ca={{ mistral_galera_ssl_ca_cert }}{% endif %}{% endif +%}
 max_overflow = {{ mistral_db_max_overflow }}
 max_pool_size = {{ mistral_db_max_pool_size }}
 pool_timeout = {{ mistral_db_pool_timeout }}
