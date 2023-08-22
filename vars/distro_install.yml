@@ -14,7 +14,7 @@
 # limitations under the License.
 
 mistral_package_list: |-
-  {% set packages = (mistral_distro_packages + mistral_service_distro_packages) %}
+  {% set packages = mistral_distro_packages + mistral_service_distro_packages %}
   {% if mistral_oslomsg_amqp1_enabled | bool %}
   {%   set _ = packages.extend(mistral_oslomsg_amqp1_distro_packages) %}
   {% endif %}

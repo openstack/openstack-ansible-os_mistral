@@ -19,13 +19,14 @@
     section: "mistral"
     option: "install_method"
     value: "{{ mistral_install_method }}"
+    mode: "0644"
 
 - name: Refresh local facts to ensure the mistral section is present
   setup:
     filter: ansible_local
     gather_subset: "!all"
 
-- name: create the system group
+- name: Create the system group
   group:
     name: "{{ mistral_system_group_name }}"
     state: "present"
@@ -93,5 +94,6 @@
     section: "mistral"
     option: "need_service_restart"
     value: true
+    mode: "0644"
   when: (install_packages is changed) or
         ('need_service_restart' not in ansible_local['openstack_ansible']['mistral'])
