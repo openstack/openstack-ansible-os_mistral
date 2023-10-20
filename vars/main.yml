@@ -18,6 +18,11 @@ _mistral_is_first_play_host: >-
     (mistral_services['mistral-api']['group'] in group_names and
       inventory_hostname == (groups[mistral_services['mistral-api']['group']] | intersect(ansible_play_hosts)) | first) | bool
   }}
+_mistral_oslomsg_rpc_vhost_conf: >-
+  {{
+    (mistral_oslomsg_rpc_vhost is string) | ternary(
+      mistral_oslomsg_rpc_vhost, mistral_oslomsg_rpc_vhost | selectattr('state', 'eq', 'present') | map(attribute='name') | first)
+  }}
 
 #
 # Compile a list of the services on a host based on whether
