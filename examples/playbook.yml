@@ -3,4 +3,6 @@
   hosts: mistral_all
   user: root
   roles:
-    - { role: "os_mistral", tags: [ "os-mistral" ] }
+    - role: "os_mistral"
+      tags:
+        - "os-mistral"
