@@ -87,6 +87,7 @@
     _oslomsg_notify_vhost: "{{ mistral_oslomsg_notify_vhost }}"
     _oslomsg_notify_transport: "{{ mistral_oslomsg_notify_transport }}"
     _oslomsg_notify_policies: "{{ mistral_oslomsg_notify_policies }}"
+    _oslomsg_notify_configure: "{{ mistral_oslomsg_notify_configure }}"
   tags:
     - always
 
