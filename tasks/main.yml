@@ -120,6 +120,7 @@
   import_tasks: mistral_post_install.yml
   tags:
     - mistral-config
+    - post-install
 
 - name: Importing mistral_db_sync tasks
   import_tasks: mistral_db_sync.yml
