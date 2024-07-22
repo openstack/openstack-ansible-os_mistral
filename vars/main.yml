@@ -16,7 +16,7 @@
 _mistral_is_first_play_host: >-
   {{
     (mistral_services['mistral-api']['group'] in group_names and
-      inventory_hostname == (groups[mistral_services['mistral-api']['group']] | intersect(ansible_play_hosts)) | first) | bool
+      inventory_hostname == (groups[mistral_services['mistral-api']['group']] | select('in', ansible_play_hosts)) | first) | bool
   }}
 _mistral_oslomsg_rpc_vhost_conf: >-
   {{
