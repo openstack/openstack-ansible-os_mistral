@@ -44,8 +44,6 @@ mistral_pip_packages:
   - python-memcached
   - systemd-python
 
-mistral_optional_oslomsg_amqp1_pip_packages:
-  - oslo.messaging[amqp1]
 mistral_venv_tag: "{{ venv_tag | default('untagged') }}"
 mistral_bin: "{{ _mistral_bin }}"
 
@@ -139,9 +137,6 @@ mistral_oslomsg_rabbit_qos_prefetch_count: "{{ oslomsg_rabbit_qos_prefetch_count
 mistral_oslomsg_rabbit_queue_manager: "{{ oslomsg_rabbit_queue_manager | default(mistral_oslomsg_rabbit_quorum_queues) }}"
 mistral_oslomsg_rabbit_quorum_delivery_limit: "{{ oslomsg_rabbit_quorum_delivery_limit | default(0) }}"
 mistral_oslomsg_rabbit_quorum_max_memory_bytes: "{{ oslomsg_rabbit_quorum_max_memory_bytes | default(0) }}"
-
-# (Qdrouterd) integration
-mistral_oslomsg_amqp1_enabled: "{{ mistral_oslomsg_rpc_transport == 'amqp' }}"
 
 # Database
 mistral_db_setup_host: "{{ openstack_db_setup_host | default('localhost') }}"

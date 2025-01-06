@@ -25,8 +25,3 @@ mistral_service_distro_packages:
   - openstack-mistral-executor
   - openstack-mistral-notifier
   - python3-systemd
-
-mistral_oslomsg_amqp1_distro_packages:
-  - cyrus-sasl-lib
-  - cyrus-sasl-plain
-  - cyrus-sasl-md5

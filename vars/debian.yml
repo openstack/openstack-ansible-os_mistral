@@ -24,8 +24,4 @@ mistral_service_distro_packages:
   - python3-mistral
   - python3-systemd
 
-mistral_oslomsg_amqp1_distro_packages:
-  - libsasl2-modules
-  - sasl2-bin
-
 cache_timeout: 600
