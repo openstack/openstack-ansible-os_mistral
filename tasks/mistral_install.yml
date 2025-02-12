@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Record the installation method
-  ini_file:
+  community.general.ini_file:
     dest: "/etc/ansible/facts.d/openstack_ansible.fact"
     section: "mistral"
     option: "install_method"
@@ -22,18 +22,18 @@
     mode: "0644"
 
 - name: Refresh local facts to ensure the mistral section is present
-  setup:
+  ansible.builtin.setup:
     filter: ansible_local
     gather_subset: "!all"
 
 - name: Create the system group
-  group:
+  ansible.builtin.group:
     name: "{{ mistral_system_group_name }}"
     state: "present"
     system: "yes"
 
 - name: Create the mistral system user
-  user:
+  ansible.builtin.user:
     name: "{{ mistral_system_user_name }}"
     group: "{{ mistral_system_group_name }}"
     comment: "{{ mistral_system_comment }}"
@@ -43,7 +43,7 @@
     home: "{{ mistral_system_user_home }}"
 
 - name: Create mistral directories
-  file:
+  ansible.builtin.file:
     path: "{{ item.path | realpath }}"
     state: directory
     owner: "{{ item.owner | default(mistral_system_user_name) }}"
@@ -59,7 +59,7 @@
     - path: "{{ mistral_system_user_home }}"
 
 - name: Install distro packages
-  package:
+  ansible.builtin.package:
     name: "{{ mistral_package_list }}"
     state: "{{ mistral_package_state }}"
     update_cache: "{{ (ansible_facts['pkg_mgr'] == 'apt') | ternary('yes', omit) }}"
@@ -70,7 +70,7 @@
   delay: 2
 
 - name: Install the python venv
-  import_role:
+  ansible.builtin.import_role:
     name: "python_venv_build"
   vars:
     venv_python_executable: "{{ mistral_venv_python_executable }}"
@@ -86,7 +86,7 @@
   when: mistral_install_method == 'source'
 
 - name: Record the need for a service restart
-  ini_file:
+  community.general.ini_file:
     dest: "/etc/ansible/facts.d/openstack_ansible.fact"
     section: "mistral"
     option: "need_service_restart"

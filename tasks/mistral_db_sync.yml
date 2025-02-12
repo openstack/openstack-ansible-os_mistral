@@ -14,13 +14,13 @@
 # limitations under the License.
 
 - name: Perform a Mistral DB sync
-  command: "{{ mistral_bin }}/mistral-db-manage upgrade head"
+  ansible.builtin.command: "{{ mistral_bin }}/mistral-db-manage upgrade head"
   become: true
   become_user: "{{ mistral_system_user_name }}"
   changed_when: false
 
 - name: Load mistral standard actions and workflows
-  command: "{{ mistral_bin }}/mistral-db-manage populate"
+  ansible.builtin.command: "{{ mistral_bin }}/mistral-db-manage populate"
   become: true
   become_user: "{{ mistral_system_user_name }}"
   changed_when: false
