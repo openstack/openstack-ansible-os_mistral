@@ -221,7 +221,7 @@ mistral_pki_setup_host: "{{ openstack_pki_setup_host | default('localhost') }}"
 mistral_pki_keys_path: "{{ mistral_pki_dir ~ '/certs/private/' }}"
 mistral_pki_certs_path: "{{ mistral_pki_dir ~ '/certs/certs/' }}"
 mistral_pki_intermediate_cert_name: "{{ openstack_pki_service_intermediate_cert_name | default('ExampleCorpIntermediate') }}"
-mistral_pki_regen_cert: ''
+mistral_pki_regen_cert: ""
 mistral_pki_san: "{{ openstack_pki_san | default('DNS:' ~ ansible_facts['hostname'] ~ ',IP:' ~ management_address) }}"
 mistral_pki_certificates:
   - name: "mistral_{{ ansible_facts['hostname'] }}"

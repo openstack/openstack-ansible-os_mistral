@@ -15,12 +15,12 @@
 
 - name: Perform a Mistral DB sync
   command: "{{ mistral_bin }}/mistral-db-manage upgrade head"
-  become: yes
+  become: true
   become_user: "{{ mistral_system_user_name }}"
   changed_when: false
 
 - name: Load mistral standard actions and workflows
   command: "{{ mistral_bin }}/mistral-db-manage populate"
-  become: yes
+  become: true
   become_user: "{{ mistral_system_user_name }}"
   changed_when: false
