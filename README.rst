@@ -1,15 +1,6 @@
-========================
-Team and repository tags
-========================
-
-.. image:: https://governance.openstack.org/tc/badges/openstack-ansible-os_mistral.svg
-    :target: https://governance.openstack.org/tc/reference/tags/index.html
-
-.. Change things from this point on
-
-========================
+=========================
 OpenStack-Ansible Mistral
-========================
+=========================
 
 This Ansible role installs and configures OpenStack Mistral services.
 
