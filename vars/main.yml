@@ -56,7 +56,6 @@ uwsgi_mistral_services: |-
          and ('wsgi_app' in value and value['wsgi_app']) %}
   {%     set _ = value.update(
             {
-             'wsgi_path':  mistral_bin ~ '/' ~ value.wsgi_name,
              'wsgi_venv': ((mistral_install_method == 'source') | ternary(mistral_bin | dirname, None)),
              'uwsgi_uid': mistral_system_user_name,
              'uwsgi_guid': mistral_system_group_name,

@@ -80,7 +80,7 @@ mistral_services:
     start_order: 2
     execstarts: "{{ _mistral_bin }}/mistral-server --server api"
     wsgi_app: "{{ mistral_api_use_uwsgi }}"
-    wsgi_name: mistral-wsgi-api
+    wsgi: "mistral.wsgi:application"
     uwsgi_overrides: "{{ mistral_api_uwsgi_ini_overrides }}"
     uwsgi_bind_address: "{{ mistral_bind_address }}"
     uwsgi_port: "{{ mistral_service_port }}"
