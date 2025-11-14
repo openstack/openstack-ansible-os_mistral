@@ -31,7 +31,7 @@
     - Restart mistral services
     - Restart uwsgi services
 
-- name: Implement policy.yaml if there are overrides configured
+- name: Place policy.yaml file
   openstack.config_template.config_template:
     content: "{{ mistral_policy_overrides }}"
     dest: "/etc/mistral/policy.yaml"
@@ -39,16 +39,5 @@
     group: "{{ mistral_system_group_name }}"
     mode: "0640"
     config_type: yaml
-  when:
-    - mistral_policy_overrides | length > 0
-  tags:
-    - mistral-policy-override
-
-- name: Remove legacy policy.yaml file
-  ansible.builtin.file:
-    path: "/etc/mistral/policy.yaml"
-    state: absent
-  when:
-    - mistral_policy_overrides | length == 0
   tags:
     - mistral-policy-override
