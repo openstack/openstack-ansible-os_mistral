@@ -21,8 +21,8 @@ mistral_venv_python_executable: "{{ openstack_venv_python_executable | default('
 mistral_system_user_name: mistral
 mistral_system_group_name: mistral
 mistral_system_shell: /sbin/nologin
-mistral_system_comment: Mistral Daemons
-mistral_system_user_home: /var/lib/mistral
+mistral_system_comment: mistral system user
+mistral_system_user_home: "/var/lib/{{ mistral_system_user_name }}"
 
 # Distribution deployment
 mistral_package_state: "{{ package_state | default('latest') }}"
