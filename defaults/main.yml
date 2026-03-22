@@ -222,12 +222,14 @@ mistral_pki_keys_path: "{{ mistral_pki_dir ~ '/certs/private/' }}"
 mistral_pki_certs_path: "{{ mistral_pki_dir ~ '/certs/certs/' }}"
 mistral_pki_intermediate_cert_name: "{{ openstack_pki_service_intermediate_cert_name | default('ExampleCorpIntermediate') }}"
 mistral_pki_regen_cert: ""
-mistral_pki_san: "{{ openstack_pki_san | default('DNS:' ~ ansible_facts['hostname'] ~ ',IP:' ~ management_address) }}"
+mistral_pki_san: "{{ openstack_pki_san | default({'dns': [ansible_facts['hostname']], 'ip': [management_address]}) }}"
+mistral_pki_backend: "{{ openstack_pki_backend | default('standalone') }}"
 mistral_pki_certificates:
   - name: "mistral_{{ ansible_facts['hostname'] }}"
-    provider: ownca
     cn: "{{ ansible_facts['hostname'] }}"
     san: "{{ mistral_pki_san }}"
+    # standalone backend only
+    provider: ownca
     signed_by: "{{ mistral_pki_intermediate_cert_name }}"
 
 # mistral destination files for SSL certificates
@@ -236,17 +238,21 @@ mistral_ssl_key: /etc/mistral/mistral.key
 
 # Installation details for SSL certificates
 mistral_pki_install_certificates:
-  - src: "{{ mistral_user_ssl_cert | default(mistral_pki_certs_path ~ 'mistral_' ~ ansible_facts['hostname'] ~ '-chain.crt') }}"
+  - name: "mistral_{{ ansible_facts['hostname'] }}"
+    type: "certificate_chain"
     dest: "{{ mistral_ssl_cert }}"
     owner: "{{ mistral_system_user_name }}"
     group: "{{ mistral_system_user_name }}"
-    mode: "0644"
-  - src: "{{ mistral_user_ssl_key | default(mistral_pki_keys_path ~ 'mistral_' ~ ansible_facts['hostname'] ~ '.key.pem') }}"
+    # standalone backend only
+    src: "{{ mistral_user_ssl_cert | default(mistral_pki_certs_path ~ 'mistral_' ~ ansible_facts['hostname'] ~ '-chain.crt') }}"
+  - name: "mistral_{{ ansible_facts['hostname'] }}"
+    type: "private_key"
     dest: "{{ mistral_ssl_key }}"
     owner: "{{ mistral_system_user_name }}"
     group: "{{ mistral_system_user_name }}"
-    mode: "0600"
+    # standalone backend only
+    src: "{{ mistral_user_ssl_key | default(mistral_pki_keys_path ~ 'mistral_' ~ ansible_facts['hostname'] ~ '.key.pem') }}"
 
 # Define user-provided SSL certificates
-# mistral_user_ssl_cert: <path to cert on ansible deployment host>
-# mistral_user_ssl_key: <path to cert on ansible deployment host>
+mistral_user_ssl_cert: ""
+mistral_user_ssl_key: ""
