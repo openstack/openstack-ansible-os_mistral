@@ -37,8 +37,8 @@ mistral_upper_constraints_url: >-
 mistral_git_constraints:
   - "--constraint {{ mistral_upper_constraints_url }}"
 mistral_pip_packages:
-  - "git+{{ mistral_git_repo }}@{{ mistral_git_install_branch }}#egg=mistral"
-  - "git+{{ mistral_extra_git_repo }}@{{ mistral_extra_git_install_branch }}#egg=mistral-extra"
+  - "mistral@git+{{ mistral_git_repo }}@{{ mistral_git_install_branch }}"
+  - "mistral-extra@git+{{ mistral_extra_git_repo }}@{{ mistral_extra_git_install_branch }}"
   - PyMySQL
   - pymemcache
   - python-memcached
